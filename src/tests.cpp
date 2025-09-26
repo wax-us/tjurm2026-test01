@@ -1,13 +1,21 @@
 #include "tests.h"
+//#include <bits/stdc++.h>
 
 // 练习1，实现库函数strlen
-int my_strlen(char *str) {
+int my_strlen(char *str)
+{
     /**
      * 统计字符串的长度。
      */
 
     // IMPLEMENT YOUR CODE HERE
-    return 0;
+    for (int i = 0; *(str + i) != '\0'; i++)
+    {
+        if (*(str + i + 1) == '\0')
+        {
+            return i + 1;
+        }
+    }
 }
 
 
@@ -18,7 +26,23 @@ void my_strcat(char *str_1, char *str_2) {
      * 注意结束符'\0'的处理。
      */
 
+
     // IMPLEMENT YOUR CODE HERE
+    int j = my_strlen(str_1); // str1的'\0'
+    for (int i = 0;; i++)
+    {
+        if (*(str_2 + i) != '\0')
+        {
+            *(str_1 + j) = *(str_2 + i);
+            j++;
+        }
+        else
+        {
+            *(str_1 + j) = '\0';
+            break;
+        }
+    }
+
 }
 
 
@@ -31,6 +55,18 @@ char* my_strstr(char *s, char *p) {
      */
 
     // IMPLEMENT YOUR CODE HERE
+    char* s_tmp = s;
+    char* p_tmp = p;
+    char* start;
+    for(;*(s) != '\0';s++){
+        s_tmp = s;
+        start = s;
+        for(p = p_tmp;*(p) !='\0' && *(p) == *(s_tmp++);p++){
+            if(*(p+1) == '\0'){
+                return start;
+            }
+        }
+    }
     return 0;
 }
 
@@ -62,7 +98,7 @@ char* my_strstr(char *s, char *p) {
  * 内存中的存储为：
  *
  *   低地址 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - >>> 高地址
- *
+ *    
  *    R    G    B    R    G    B    R    G    B    R    G    B    R    G    B    R    G    B
  *   111, 123, 215, 233, 123, 142, 156, 233, 267, 223, 234, 175, 123, 117, 168, 123, 156, 156
  *   |< -------- >| |< -------- >| |< -------- >| |< -------- >| |< -------- >| |< -------- >|
@@ -71,6 +107,11 @@ char* my_strstr(char *s, char *p) {
  *                    第一行像素                                   第二行像素
  *
  *   理解了图片的存储之后，再开始编写代码。
+ *   三通道像素公式: 第i行第j个像素地址 -> float* p = in + 3*(i-1)*w + 3*(j-1)
+ *                               r通道 -> float r = *(in + 3*(i-1)*w + 3*(j-1)) 或者 *p
+ *                               g通道 -> float g = *(in + 3*(i-1)*w + 3*(j-1)+1) 或者 *(p+1)
+ *                               b通道 -> float b = *(in + 3*(i-1)*w + 3*(j-1)+2) 或者 *(p+2)
+ *   单通道像素公式: 第i行第j个像素 -> float* n = out + (i-1)*w + (j-1)
  */
 
 
@@ -97,6 +138,22 @@ void rgb2gray(float *in, float *out, int h, int w) {
 
     // IMPLEMENT YOUR CODE HERE
     // ...
+    float r,g,b;
+    float value;
+    for(int i=1;i<=h;i++){
+        for(int j=1;j<=w;j++){
+            r = *(in + 3*(i-1)*w + 3*(j-1));
+            g = *(in + 3*(i-1)*w + 3*(j-1)+1);
+            b = *(in + 3*(i-1)*w + 3*(j-1)+2);
+            value = 0.1140 * r  + 0.5870 * g + 0.2989 * b;
+            *(out + (i-1)*w + (j-1)) = value;
+        }
+    }
+
+
+
+
+
 }
 
 // 练习5，实现图像处理算法 resize：缩小或放大图像
