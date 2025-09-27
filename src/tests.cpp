@@ -1,5 +1,4 @@
 #include "tests.h"
-#include <bits/stdc++.h>
 
 // 练习1，实现库函数strlen
 int my_strlen(char *str)
