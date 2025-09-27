@@ -9,13 +9,10 @@ int my_strlen(char *str)
      */
 
     // IMPLEMENT YOUR CODE HERE
-    for (int i = 0; *(str + i) != '\0'; i++)
-    {
-        if (*(str + i + 1) == '\0')
-        {
-            return i + 1;
-        }
+    int i = 0;
+    while(*(str+i++)!='\0'){
     }
+    return i-1;
 }
 
 
@@ -168,7 +165,7 @@ void resize(float *in, float *out, int h, int w, int c, float scale) {
      *
      *                                * (x2, y2), v2
      *                               /
-     *                              /
+     *                              / 
      *                             * (x, y), v
      *                            /
      *                           * (x1, y1), v1
