@@ -1,5 +1,5 @@
 #include "tests.h"
-//#include <bits/stdc++.h>
+#include <bits/stdc++.h>
 
 // 练习1，实现库函数strlen
 int my_strlen(char *str)
@@ -248,11 +248,74 @@ void resize(float *in, float *out, int h, int w, int c, float scale) {
      *        剩下三个邻居就好找了
      *     3. 注意上面的方法中，四个邻居点的坐标可能会超出 src 的范围，
      *        所以需要对其进行边界检查
+     * 理解了图片的存储之后，再开始编写代码。
+    *   三通道像素公式: 第i行第j个像素地址 -> float* p = in + 3*(i-1)*w + 3*(j-1)
+    *                               r通道 -> float r = *(in + 3*(i-1)*w + 3*(j-1)) 或者 *p
+    *                               g通道 -> float g = *(in + 3*(i-1)*w + 3*(j-1)+1) 或者 *(p+1)
+    *                               b通道 -> float b = *(in + 3*(i-1)*w + 3*(j-1)+2) 或者 *(p+2)
+    *   单通道像素公式: 第i行第j个像素 -> float* n = out + (i-1)*w + (j-1)
      */
 
     int new_h = h * scale, new_w = w * scale;
+    float x,y;
+    int x1,y1,x2,y2;
+    float r,g,b;
     // IMPLEMENT YOUR CODE HERE
+    for(int i=1;i<=new_h;i++){
+        for(int j=1;j<=new_w;j++){
+            x = j/scale;//原图坐标
+            y = i/scale;
+            x1 = static_cast<int>(x);
+            y1 = static_cast<int>(y);
+            if(x+1 <= w && y+1 <= h){
+                x2 = x1+1;
+                y2 = y1+1;
+            }else if(x+1 <= w && y+1 > h){
+                x2 = x1+1;
+                y2 = y1;
+            }else if(x+1 > w && y+1 <= h){
+                x2 = x1;
+                y2 = y1+1;
+            }else{
+                x2 = x1;
+                y2 = y1;
+            }//p1(x1,y2)  p2(x2,y2)  p3(x1,y1)  p4(x2,y1)
+            // x1 = static_cast<int>(x1);
+            // x2 = static_cast<int>(x2);
+            // y1 = static_cast<int>(y1);
+            // y2 = static_cast<int>(y2);
+            
+            float r_p1,g_p1,b_p1,r_p2,g_p2,b_p2,r_p3,g_p3,b_p3,r_p4,g_p4,b_p4;
+            r_p1 = *(in + 3*(y2-1)*w + 3*(x1-1));
+            g_p1 = *(in + 3*(y2-1)*w + 3*(x1-1)+1);
+            b_p1 = *(in + 3*(y2-1)*w + 3*(x1-1)+2);
+            r_p2 = *(in + 3*(y2-1)*w + 3*(x2-1));
+            g_p2 = *(in + 3*(y2-1)*w + 3*(x2-1)+1);
+            b_p2 = *(in + 3*(y2-1)*w + 3*(x2-1)+2);
+            r_p3 = *(in + 3*(y1-1)*w + 3*(x1-1));
+            g_p3 = *(in + 3*(y1-1)*w + 3*(x1-1)+1);
+            b_p3 = *(in + 3*(y1-1)*w + 3*(x1-1)+2);
+            r_p4 = *(in + 3*(y1-1)*w + 3*(x2-1));
+            g_p4 = *(in + 3*(y1-1)*w + 3*(x2-1)+1);
+            b_p4 = *(in + 3*(y1-1)*w + 3*(x2-1)+2);
+            //dx = x - x1, dy = y - y1
+            //Q = P1 * (1 - dx)(1 - dy) + P2 * dx(1 - dy) + P3 * (1 - dx)dy + P4 * dxdy
+            float dx,dy;
+            dx = x-x1;
+            dy = y-y1;
+            float r,g,b;
+            r = r_p1 * (1-dx)*(1-dy) + r_p2 * dx*(1-dy) + r_p3 * (1-dx)*dy + r_p4 *dx*dy;
+            g = g_p1 * (1-dx)*(1-dy) + g_p2 * dx*(1-dy) + g_p3 * (1-dx)*dy + g_p4 *dx*dy;
+            b = b_p1 * (1-dx)*(1-dy) + b_p2 * dx*(1-dy) + b_p3 * (1-dx)*dy + b_p4 *dx*dy;
+            // r = (r_p1+r_p2+r_p3+r_p4)*0.25;
+            // g = (g_p1+g_p2+g_p3+g_p4)*0.25;
+            // b = (b_p1+b_p2+b_p3+b_p4)*0.25;
+            *(out + 3*(i-1)*new_w + 3*(j-1)) = r;
+            *(out + 3*(i-1)*new_w + 3*(j-1)+1) = g;
+            *(out + 3*(i-1)*new_w + 3*(j-1)+2) = b;
+    }
 
+}
 }
 
 
