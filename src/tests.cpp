@@ -346,6 +346,7 @@ void hist_eq(float *in, int h, int w) {
     double temp;
     double sk1[255];
     int sk[255];
+    //std::cout <<N;
 
     for(int i=0;i<255;i++){
         nk[i] = 0;
@@ -362,22 +363,18 @@ void hist_eq(float *in, int h, int w) {
     
     for(int i=0;i<255;i++){
         if(i==0){
-            temp = (nk[i]/N)*255;
+            temp = (nk[i]*1.0/N);
         }else{
-            temp = (nk[i]/N+sk1[i-1])*255;
+            temp = (nk[i]*1.0/N+sk1[i-1]);
         }
         sk1[i] = temp;
-        // if(sk1[i] - static_cast<int>(sk1[i]) >= 0.5){
-        //     sk[i] = static_cast<int>(sk1[i])+1;
-        // }else{
-        //     sk[i] = static_cast<int>(sk1[i]);
-        // }
+        if(sk1[i]*255 - static_cast<int>(sk1[i]*255) >= 0.5){
+            sk[i] = static_cast<int>(sk1[i]*255)+1;
+        }else{
+            sk[i] = static_cast<int>(sk1[i]*255);
+        }
     }//计算sk
 
-    for(int i=0;i<255;i++){
-        std::cout <<std::endl << sk1[i]<<std::endl;
-
-    }
 
 
     for(int i=1;i<=h;i++){
