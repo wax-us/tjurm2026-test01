@@ -335,7 +335,55 @@ void hist_eq(float *in, int h, int w) {
      * (1) 输入图片是灰度图，每个像素值是[0, 255]内的小数
      * (2) 灰度级个数为256，也就是{0, 1, 2, 3, ..., 255}
      * (3) 使用数组来实现灰度级 => 灰度级的映射
+     * 
+     * 单通道像素公式: 第i行第j个像素 -> float* n = in + (i-1)*w + (j-1)
      */
 
     // IMPLEMENT YOUR CODE HERE
+
+    int N = h*w;
+    int nk[255];
+    double temp;
+    double sk1[255];
+    int sk[255];
+
+    for(int i=0;i<255;i++){
+        nk[i] = 0;
+        sk[i] = 0;
+    }//初始化nk数组
+
+    int a;
+    for(int i=1;i<=h;i++){
+        for(int j=1;j<=w;j++){
+            a = *(in + (i-1)*w + (j-1));
+            nk[a]++;
+        }
+    }//统计灰度值
+    
+    for(int i=0;i<255;i++){
+        if(i==0){
+            temp = (nk[i]/N)*255;
+        }else{
+            temp = (nk[i]/N+sk1[i-1])*255;
+        }
+        sk1[i] = temp;
+        // if(sk1[i] - static_cast<int>(sk1[i]) >= 0.5){
+        //     sk[i] = static_cast<int>(sk1[i])+1;
+        // }else{
+        //     sk[i] = static_cast<int>(sk1[i]);
+        // }
+    }//计算sk
+
+    for(int i=0;i<255;i++){
+        std::cout <<std::endl << sk1[i]<<std::endl;
+
+    }
+
+
+    for(int i=1;i<=h;i++){
+        for(int j=1;j<=w;j++){
+            a = *(in + (i-1)*w + (j-1));
+            *(in + (i-1)*w + (j-1)) = sk[a];
+        }
+    }//映射
 }
